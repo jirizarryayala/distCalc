@@ -1,0 +1,14 @@
+distCalc 0.1.0 Help
+Functions:
+preprocess-takes a .mzML file and outputs a preprocessed verion.
+
+distCalc-internal function for distComp.
+
+distComp-takes one, two or three .mzML files and calculates the monoisotopic distribution of the same envelope in all of them.
+Notes:
+-Also requires mzr, charge state, and Sprectrum Index(see findSpecIndex) for the envelope of interest of the first file.
+-The output for this function is a distribution class object(when one file is the input), or lists with distribution class objects(when more than one file is the input.)
+
+findSpecIndex-Given a preprocessed .mzML file and a Scan Number returns Spectrum Index.
+
+distWrite-given a distribution class object and an output path writes a .txt file with that distribution's data frame and weighted average mass.
