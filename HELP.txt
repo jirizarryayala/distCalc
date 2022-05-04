@@ -1,14 +1,55 @@
-distCalc 0.1.0 Help
+####distCalc 1.0 Help#####
+##########################
+
+Introduction:
+distCalc is a set of python functions built on pandas, numpy, matplotlib, and pymzml. It contains functions capable of taking a .mzML file, calculating the monoisotopic distributions of given features within, 
+returning those distributions along with the relative intensity of its peaks and the average mass of the distribution, applying quality control methods to it necessary, and finally writing those distributions as a text file.
+Additionaly, distCalc can search other .mzML files for similar distributions.
+
+###########################
 Functions:
-preprocess-takes a .mzML file and outputs a preprocessed verion.
+I.preprocess-takes a .mzML file and outputs a preprocessed verion.
 
-distCalc-internal function for distComp.
+Example:
+myData=preprocess("Dummy\File\Path\To\File.mzML")
+>where myData will be output as a MzmlData object usable as the input for distComp.
 
-distComp-takes one, two or three .mzML files and calculates the monoisotopic distribution of the same envelope in all of them.
+II.distCalc-internal function for distComp.
+
+III.findSpecIndex-Given a preprocessed .mzML file and a Scan Number returns Spectrum Index.
+
+IV.distComp-takes one, two or three .mzML files and calculates the monoisotopic distribution of the same envelope in all of them.
 Notes:
 -Also requires mzr, charge state, and Sprectrum Index(see findSpecIndex) for the envelope of interest of the first file.
 -The output for this function is a distribution class object(when one file is the input), or lists with distribution class objects(when more than one file is the input.)
 
-findSpecIndex-Given a preprocessed .mzML file and a Scan Number returns Spectrum Index.
+Example:
+result=distComp(preprocessedMZMLFile=myData, SpecIndex=667, precursorMZR=1064.2585, charge=3)
+>result will be a distribution class object containing the properties dataFrame, avgMass, and graph.
+results=distComp(preprocessedMZMLFile=myData, SpecIndex=667, precursorMZR=1064.2585, charge=3, secondPreprocessedMZMLFile=myData1, thirdPreprocessedMZMLFile=myData2)
+>results will be a list containing: the distribution for the first file at index 0, lists containing the top three matches for the second and third file at index 1 and 2 respectively. 
+>Therefore to access the graph of the first file we could do:
+results[0].graph
+>But for the second and third file we must specify which of the three distributions within we want to see, like:
+results[1][0].graphs 
 
-distWrite-given a distribution class object and an output path writes a .txt file with that distribution's data frame and weighted average mass.
+V.findSpecIndex-Given a preprocessed .mzML file and a Scan Number returns Spectrum Index necessary for distComp.
+
+Example:
+mySpecIndex=findSpecIndex(preprocessedMZMLFile=myData, scanNumber=7062)
+>Where mySpecIndex will be an integer containing the value closest to the expected Spectrum Index. 
+
+VI.distQC:-uses distances between the maximums on both sides of a local minimum to determine if the distribution should be cut.
+
+Example:
+cleanResult=distQC(result)
+>cleanResult will be a distribution class object, which will be different from the input only if the maximum points on both sides of the local minimum are far enough apart.
+
+VII.distWrite-given a distribution class object or a list of distribution class objects and an output path writes a .txt file with that distribution's data frame and weighted average mass.
+
+Example:
+distWrite(result, "Dummy\File\Path\To\Output.txt")
+>Output.txt will be one text file with one distribution's information.
+
+distWrite(results[1], "Dummy\File\Path\To\Output.txt")
+>Output.txt will be one text file with three distribution's information.
